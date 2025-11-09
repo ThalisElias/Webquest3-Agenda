@@ -41,4 +41,9 @@ public class Contato implements Comparable<Contato> {
     public String toString() {
         return "Nome: " + nome + " | Telefone: " + telefone + " | Email: " + email;
     }
+    
+    @Override
+    public int compareTo(Contato outro) {
+        return this.nome.compareTo(outro.getNome());
+    }
 }
