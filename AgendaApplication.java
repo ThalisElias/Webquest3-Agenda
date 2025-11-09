@@ -24,7 +24,7 @@ public class AgendaApplication {
                 opcao = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Opção inválida. Por favor, digite um número.");
-                continue;
+                continue; 
             }
 
             switch (opcao) {
@@ -38,16 +38,21 @@ public class AgendaApplication {
                     remover();
                     break;
                 case 4:
-                    listar();
+                    listarOrdenado(); 
                     break;
                 case 5:
-                    salvar();
+                    buscarPorDominio(); 
                     break;
                 case 6:
-                    carregar();
+                    salvar();
                     break;
                 case 7:
-                    executando = false;
+                    carregar();
+                    break;
+                case 8:
+                    executando = false; 
+                    System.out.println("Salvando agenda antes de sair...");
+                    agenda.salvarContatosCSV(NOME_ARQUIVO_PADRAO);
                     System.out.println("Obrigado por usar a agenda. Até logo!");
                     break;
                 default:
@@ -58,18 +63,19 @@ public class AgendaApplication {
                 pressioneEnterParaContinuar();
             }
         }
-        scanner.close();
+        scanner.close(); 
     }
 
     private static void exibirMenu() {
         System.out.println("\n--- AGENDA ELETRÔNICA ---");
         System.out.println("1. Adicionar Contato");
-        System.out.println("2. Buscar Contato");
+        System.out.println("2. Buscar Contato por Nome");
         System.out.println("3. Remover Contato");
-        System.out.println("4. Listar Todos os Contatos");
-        System.out.println("5. Salvar em CSV");
-        System.out.println("6. Carregar de CSV");
-        System.out.println("7. Sair");
+        System.out.println("4. Listar Todos os Contatos (Ordenado)");
+        System.out.println("5. Buscar por Domínio de Email (ex: gmail.com)");
+        System.out.println("6. Salvar em CSV");
+        System.out.println("7. Carregar de CSV");
+        System.out.println("8. Sair");
         System.out.print("Escolha uma opção: ");
     }
 
@@ -117,13 +123,29 @@ public class AgendaApplication {
         }
     }
 
-    private static void listar() {
-        System.out.println("\n--- Lista de Contatos ---");
-        List<Contato> contatos = agenda.listarTodosContatos();
+    private static void listarOrdenado() {
+        System.out.println("\n--- Contatos (Ordenados por Nome) ---");
+        List<Contato> contatos = agenda.listarContatosOrdenados(); 
         
         if (contatos.isEmpty()) {
             System.out.println("A agenda está vazia.");
         } else {
+            for (Contato contato : contatos) {
+                System.out.println(contato);
+            }
+        }
+    }
+    
+    private static void buscarPorDominio() {
+        System.out.println("\n--- Buscar por Domínio de Email ---");
+        System.out.print("Digite o domínio (ex: gmail.com): ");
+        String dominio = scanner.nextLine();
+        
+        List<Contato> contatos = agenda.buscarPorDominioEmail(dominio);
+        if (contatos.isEmpty()) {
+            System.out.println("Nenhum contato encontrado com o domínio @" + dominio);
+        } else {
+            System.out.println("Contatos encontrados:");
             for (Contato contato : contatos) {
                 System.out.println(contato);
             }
