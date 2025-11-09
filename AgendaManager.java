@@ -2,6 +2,13 @@
 // Thalis Elias Da Silva Teixeira
 // Polo: Floresta
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +33,6 @@ public class AgendaManager implements GerenciadorContatos {
     @Override
     public Contato buscarContato(String nome) throws ContatoNaoEncontradoException {
         Contato contato = contatos.get(nome);
-
         if (contato == null) {
             throw new ContatoNaoEncontradoException("Erro: Contato com o nome '" + nome + "' não foi encontrado.");
         }
@@ -36,7 +42,6 @@ public class AgendaManager implements GerenciadorContatos {
     @Override
     public void removerContato(String nome) throws ContatoNaoEncontradoException {
         Contato removido = contatos.remove(nome);
-
         if (removido == null) {
             throw new ContatoNaoEncontradoException("Erro: Contato com o nome '" + nome + "' não foi encontrado.");
         }
@@ -50,23 +55,55 @@ public class AgendaManager implements GerenciadorContatos {
     
     @Override
     public void salvarContatosCSV(String nomeArquivo) {
-        System.out.println('Salvar em CSV')
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
+            
+            for (Contato contato : contatos.values()) {
+                String linha = contato.getNome() + ";" + contato.getTelefone() + ";" + contato.getEmail();
+                
+                writer.write(linha);
+                writer.newLine();
+            }
+            System.out.println("Contatos salvos com sucesso em " + nomeArquivo);
+            
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar arquivo CSV: " + e.getMessage());
+        }
     }
 
     @Override
     public void carregarContatosCSV(String nomeArquivo) {
-        System.out.println('Carregar de CSV')
+        try (BufferedReader reader = new BufferedReader(new FileReader(nomeArquivo))) {
+            
+            contatos.clear();
+            String linha;
+            
+            while ((linha = reader.readLine()) != null) {
+                
+                String[] campos = linha.split(";");
+                
+                if (campos.length == 3) {
+                    Contato contato = new Contato(campos[0], campos[1], campos[2]);
+                    contatos.put(contato.getNome(), contato);
+                }
+            }
+            System.out.println("Contatos carregados com sucesso de " + nomeArquivo);
+            
+        } catch (FileNotFoundException e) {
+            System.out.println("Erro: Arquivo não encontrado: " + nomeArquivo);
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar arquivo CSV: " + e.getMessage());
+        }
     }
 
     @Override
     public List<Contato> listarContatosOrdenados() {
-        System.out.println('Listar Ordenado')
+        System.out.println("Função 'Listar Ordenado' ainda não implementada.");
         return new ArrayList<>();
     }
 
     @Override
     public List<Contato> buscarPorDominioEmail(String dominio) {
-        System.out.println('Buscar por Domínio')
+        System.out.println("Função 'Buscar por Domínio' ainda não implementada.");
         return new ArrayList<>();
     }
 }
