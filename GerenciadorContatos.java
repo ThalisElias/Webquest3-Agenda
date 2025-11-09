@@ -1,0 +1,24 @@
+// Integrantes da Equipe:
+// Thalis Elias Da Silva Teixeira
+// Polo: Floresta
+
+
+import java.util.List;
+
+public interface GerenciadorContatos {
+    
+    
+    void adicionarContato(Contato contato) throws ContatoExistenteException;
+    
+    Contato buscarContato(String nome) throws ContatoNaoEncontradoException;
+    
+    void removerContato(String nome) throws ContatoNaoEncontradoException;
+    
+    List<Contato> listarTodosContatos();
+    
+    void salvarContatosCSV(String nomeArquivo);
+    void carregarContatosCSV(String nomeArquivo);
+
+    List<Contato> listarContatosOrdenados();
+    List<Contato> buscarPorDominioEmail(String dominio);
+}
