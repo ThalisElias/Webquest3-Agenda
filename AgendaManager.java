@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,15 +57,12 @@ public class AgendaManager implements GerenciadorContatos {
     @Override
     public void salvarContatosCSV(String nomeArquivo) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
-            
             for (Contato contato : contatos.values()) {
                 String linha = contato.getNome() + ";" + contato.getTelefone() + ";" + contato.getEmail();
-                
                 writer.write(linha);
                 writer.newLine();
             }
             System.out.println("Contatos salvos com sucesso em " + nomeArquivo);
-            
         } catch (IOException e) {
             System.out.println("Erro ao salvar arquivo CSV: " + e.getMessage());
         }
@@ -73,21 +71,16 @@ public class AgendaManager implements GerenciadorContatos {
     @Override
     public void carregarContatosCSV(String nomeArquivo) {
         try (BufferedReader reader = new BufferedReader(new FileReader(nomeArquivo))) {
-            
             contatos.clear();
             String linha;
-            
             while ((linha = reader.readLine()) != null) {
-                
                 String[] campos = linha.split(";");
-                
                 if (campos.length == 3) {
                     Contato contato = new Contato(campos[0], campos[1], campos[2]);
                     contatos.put(contato.getNome(), contato);
                 }
             }
             System.out.println("Contatos carregados com sucesso de " + nomeArquivo);
-            
         } catch (FileNotFoundException e) {
             System.out.println("Erro: Arquivo não encontrado: " + nomeArquivo);
         } catch (IOException e) {
@@ -97,13 +90,21 @@ public class AgendaManager implements GerenciadorContatos {
 
     @Override
     public List<Contato> listarContatosOrdenados() {
-        System.out.println("Função 'Listar Ordenado' ainda não implementada.");
-        return new ArrayList<>();
+        List<Contato> lista = new ArrayList<>(contatos.values());
+        Collections.sort(lista);
+        return lista;
     }
 
     @Override
     public List<Contato> buscarPorDominioEmail(String dominio) {
-        System.out.println("Função 'Buscar por Domínio' ainda não implementada.");
-        return new ArrayList<>();
+        List<Contato> encontrados = new ArrayList<>();
+        String dominioBusca = "@" + dominio; 
+        
+        for (Contato contato : contatos.values()) {
+            if (contato.getEmail().endsWith(dominioBusca)) {
+                encontrados.add(contato);
+            }
+        }
+        return encontrados;
     }
 }
